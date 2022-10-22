@@ -38,6 +38,22 @@ reviewSchema.pre(/^find/, function(next){
     });
     next();
 });
+// nếu dùng reviewSchma.post(..., function(){}): Post sẽ không được sử dụng next();
+reviewSchema.statics.calcAverangeRatings = async function(tourId){
 
+    const stats = await this.aggrate([
+        {
+            $match: {tour: tourId}
+        },
+        {
+            $group: {
+                _id: '$tour',
+                nRating: { $sum: 1},
+                avgRating: { $avg: '$rating'}
+            }
+        }
+    ]);
+    console.log(stats);
+};
 const Review = mongoose.model('Reivew',reviewSchema);
 module.exports = Review;

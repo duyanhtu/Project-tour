@@ -32,7 +32,6 @@ const createSendToken = (user, statusCode, res) => {
     token,
     data: {
       user
-      
     }
   });
 };
