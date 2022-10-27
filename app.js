@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -13,7 +14,11 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const  hpp = require('hpp');
 const app = express();
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 // 1) Global Middleware
+//Serving static files
+app.use(express.static(path.join(__dirname, 'public')));
 // Set sercurity HTTP headers
 app.use(helmet());
 // morgan sẽ trả về một Logger đi kèm mỗi lệnh để dễ kiểm tra lỗi
@@ -54,6 +59,12 @@ app.use((req, res, next) => {
   next();
 });
 // 3. Route
+app.get('/', (req, res)=>{
+  res.status(200).render('base', {
+    tour: 'The Forest Hiker',
+    user: 'anh tu'
+  });
+});
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/reviews', reviewRoutes);

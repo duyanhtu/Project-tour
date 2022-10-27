@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const Tour = require('./tourModel')
 const reviewSchema = new mongoose.Schema(
     {
         review: {
@@ -31,6 +31,7 @@ const reviewSchema = new mongoose.Schema(
         toObject: {virtuals: true}
     }
 );
+reviewSchema.index({tour: 1, user: 1}, {unique: true});
 reviewSchema.pre(/^find/, function(next){
     this.populate({
         path: 'user',
@@ -53,7 +54,22 @@ reviewSchema.statics.calcAverangeRatings = async function(tourId){
             }
         }
     ]);
-    console.log(stats);
+    // console.log(stats);
+    await Tour.findByIdAndUpdate(tourId, {
+        ratingsAverage : stats[0].nRating,
+        ratingsQuantity : stats[0].avgRating
+    });
 };
+reviewSchema.post(/^find/, async function(){
+    await this.constructor.calcAverangeRatings(this.tour);
+});
+
+reviewSchema.pre(/^findOneAnd/, async function(next){
+    this.r = await Tour.findOne();
+    next();
+});
+reviewSchema.post(/^findOneAnd/,async function(){
+    await this.r.constructor.calcAverangeRatings(this.r.tour);
+});
 const Review = mongoose.model('Reivew',reviewSchema);
 module.exports = Review;
