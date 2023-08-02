@@ -10,7 +10,6 @@ exports.getAll = Model => catchAsync(async (req, res, next) => {
     .sort()
     .limitFields()
     .pageinate();
-    // const doc = await features.query.explain();
     const doc = await features.query;
     res.status(200).json({
         status: "success",
@@ -59,6 +58,7 @@ exports.getOne = (Model, popOptions) =>catchAsync(async (req, res, next) => {
     if(!doc){
         return next(new AppError('No document found with that ID', 404))
     }
+    console.log("Get One Tour");
     res.status(200).json({
         status: 'success',
         data: {doc}

@@ -39,7 +39,6 @@ reviewSchema.pre(/^find/, function(next){
     });
     next();
 });
-// nếu dùng reviewSchma.post(..., function(){}): Post sẽ không được sử dụng next();
 reviewSchema.statics.calcAverangeRatings = async function(tourId){
 
     const stats = await this.aggrate([
@@ -54,15 +53,22 @@ reviewSchema.statics.calcAverangeRatings = async function(tourId){
             }
         }
     ]);
-    // console.log(stats);
-    await Tour.findByIdAndUpdate(tourId, {
-        ratingsAverage : stats[0].nRating,
-        ratingsQuantity : stats[0].avgRating
-    });
+    if(stats.length > 0){
+        await Tour.findByIdAndUpdate(tourId, {
+            ratingsAverage : stats[0].nRating,
+            ratingsQuantity : stats[0].avgRating
+        });
+    }
+    else {
+        await Tour.findByIdAndUpdate(tourId, {
+            ratingsAverage: 4.5,
+            ratingsQuantity: 0
+        });
+    }
 };
-reviewSchema.post(/^find/, async function(){
-    await this.constructor.calcAverangeRatings(this.tour);
-});
+// reviewSchema.post(/^find/, async function(){
+//     await this.constructor.calcAverangeRatings(this.tour);
+// });
 
 reviewSchema.pre(/^findOneAnd/, async function(next){
     this.r = await Tour.findOne();

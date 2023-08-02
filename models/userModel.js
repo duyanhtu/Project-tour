@@ -7,22 +7,28 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Please tell us your name'],
-        unique: true 
         // maxlength: [40, 'A tour name must have less or equal then 40 characters'],
         // minlenght: [10, 'A tour name must have more or equal then 10 characters'],
     },
     email: {
         type: String,
         required: [true, 'Please provide your email'],
-        unique: true, 
         lowercase: true,
         validate: [validator.isEmail, 'Please provide a valid email']
     },
-    photo: String,
+    photo: {
+        type: String,
+        default:
+            'https://firebasestorage.googleapis.com/v0/b/natours-220f9.appspot.com/o/users%2Fdefault.jpg?alt=media&token=a4d98ad5-1070-43ab-b4d5-12025e90680d',
+    },
     role:{
         type: String,
         enum: ['user', 'guide', 'admin', 'lead-guide'],
         default: 'user'        
+    },
+    name_photo: {
+        type: String,
+        default: 'default',
     },
     password: {
         type: String,

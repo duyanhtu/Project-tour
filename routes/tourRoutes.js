@@ -1,12 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const reviewRoutes= require('./../routes/reviewRoutes');
-// 2. Route Handlers
 const tourController =require('./../controllers/tourController');
 const authController = require('./../controllers/authController');
-// const reviewController = require('./../controllers/reviewController');
-// Hàm router.param chạy khi app js gọi đến tourRoutes.js
-// router.param('id', tourController.checkID);
+
 router 
     .route('/top-5-cheap')
     .get(tourController.aliasTopTours, tourController.getAllTours)
@@ -27,6 +24,9 @@ router
 router
         .route('/tours-within/:distance/center/:latlng/unit/:unit')
         .get(tourController.getToursWithin);
+
+router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
+        
 router
     .route('/:id')
     .get(tourController.getTour)

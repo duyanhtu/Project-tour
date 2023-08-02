@@ -158,10 +158,7 @@ exports.getDistances = catchAsync(async (req, res, next) => {
 exports.getAllTours = factory.getAll(Tour);
     
 exports.getTour = factory.getOne(Tour, {path: 'reviews'});
-    // const id = req.params.id * 1;// cách biến chuỗi thành 1 số
-    // find(): sẽ trả về một mảng các ptu thỏa mãn điều kiện
-    // cách để tham chiếu DB const tour = await Tour.findById(req.params.id).populate({ path: 'guides', select: '-__v -passwordChangedAt'})
-    // Có thể thay để viết vào query middleware
+    
 exports.createTour = factory.createOne(Tour);
     
 exports.updateTour = factory.updateOne(Tour);

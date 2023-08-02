@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
-// const User = require('../models/userModel')
 const tourSchema = new mongoose.Schema(
     {
         name: {
@@ -11,8 +10,6 @@ const tourSchema = new mongoose.Schema(
             trim: true, 
             maxlength: [40, 'A tour name must have less or equal then 40 characters'],
             minlenght: [10, 'A tour name must have more or equal then 10 characters'],
-            //isAlpha: chuỗi chỉ được chứa ký tự không được chứa số
-            // validate: [validator.isAlpha, ['Tour name must only contain characters']]
         },
         slug: String,
         duration: {
@@ -25,7 +22,7 @@ const tourSchema = new mongoose.Schema(
         },
         difficulty : {
             type : String,
-            required : [true,'A tour must have a difficulty'], // đây là cách viết tắt cho object hoản chỉnh(-enum(object)-hoàn chỉnh-)
+            required : [true,'A tour must have a difficulty'],
             enum : {
             values : ['easy','medium','difficult'],
             message: 'Difficulty is either: easy, medium, difficult'
@@ -61,7 +58,8 @@ const tourSchema = new mongoose.Schema(
         },
         description:{
             type: String,
-            trim: true
+            trim: true,
+            required: [true, 'A tour must have a description']
         },
         imageCover:{
             type: String,
@@ -79,7 +77,6 @@ const tourSchema = new mongoose.Schema(
             default: false
             },
         startLocation: {
-            //GeoJSON
             type: {
                 type: String,
                 default: 'Point',
@@ -89,7 +86,7 @@ const tourSchema = new mongoose.Schema(
             adress: String,
             description: String
         },
-        Locations: [
+        locations: [
             {
                 type: {
                     type: String,
@@ -102,7 +99,6 @@ const tourSchema = new mongoose.Schema(
                 day: Number
             }
         ],
-        // guides: Array
         guides: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
@@ -130,24 +126,6 @@ tourSchema.pre('save', function(next){
     this.slug = slugify(this.name, {lower: true});
     next();
 });
-// Đây là cách Nhúng trong DB
-// tourSchema.pre('save', async function(next){
-//     // map sẽ trả về một mảng 
-//     const guidesPromise = this.guides.map(async id => await User.findById(id))
-//     this.guides = await Promise.all(guidesPromise);
-//     next();
-// });
-// tourSchema.pre('save', function(next){
-//     console.log('Will save document...');
-//     next();
-// });
-// tourSchema.post('save', function(doc, next){
-//     console.log(doc);
-//     next();
-// })
-
-
-// QUERY MIDDLEWARE
 tourSchema.pre(/^find/, function(next){
     this.find({ secretTour: {$ne: true} });
     this.start = Date.now();
